@@ -1,0 +1,13 @@
+KPI Name,Description,Calculation / Formula,Grain,Data Source Tables,Primary Stakeholder
+Active Customers,Number of currently active Google Fiber customers.,COUNT(DISTINCT customer_id) WHERE status = 'active',"Daily, by region, plan","fact_billing, dim_customer, dim_region, dim_plan, dim_date","Marketing, Finance"
+New Installations,Number of new installations completed in the time period.,COUNT(DISTINCT install_job_id) WHERE job_type = 'install' AND job_status = 'completed',"Daily, by region, technician team","fact_install_jobs, dim_region, dim_technician, dim_date",Field Service Supervisor
+Churned Customers,Number of customers who cancelled service in the time period.,COUNT(DISTINCT customer_id) WHERE status = 'churned' AND churn_date IN period,"Daily, by region, plan","fact_billing, dim_customer, dim_region, dim_plan, dim_date","Customer Experience, Marketing"
+Churn Rate,Percentage of active customers who churned in the period.,churned_customers / active_customers_at_start_of_period,"Monthly, by region, plan",Derived from churned customers + active customers,"Executives, Customer Experience"
+Monthly Recurring Revenue (MRR),Total subscription revenue in the selected month.,SUM(monthly_charge) FOR active subscriptions,"Monthly, by region, plan","fact_billing, dim_region, dim_plan, dim_date",Finance
+Average Revenue Per User (ARPU),Average monthly revenue per active customer.,MRR / active_customers,"Monthly, by region, plan",Derived from MRR + active customers,"Finance, Executives"
+Network Uptime %,Percentage of time the network is available.,1 - (total_outage_minutes / total_possible_minutes) * 100,"Daily, by region","fact_network_events, dim_region, dim_date",Network Operations
+Outage Count,Number of distinct network outages in the period.,COUNT(DISTINCT outage_id),"Daily, by region","fact_network_events, dim_region, dim_date",Network Operations
+Average Installation Duration,Average time from job start to completion for installs.,"AVG(TIMESTAMP_DIFF(completed_at, started_at, MINUTE))","Daily, by region, technician team","fact_install_jobs, dim_technician, dim_region, dim_date",Field Service Supervisor
+First-Time Fix Rate,Percentage of jobs resolved on the first visit.,first_time_fix_jobs / total_jobs,"Daily, by region, technician team",fact_install_jobs,Field Service Supervisor
+Ticket Volume,Number of support tickets created in the period.,COUNT(ticket_id),"Daily, by region, ticket category","fact_support_tickets, dim_region, dim_date",Support Manager
+Average Resolution Time,Average time from ticket creation to closure.,"AVG(TIMESTAMP_DIFF(resolved_at, created_at, HOUR))","Daily, by region, ticket category","fact_support_tickets, dim_region, dim_date","Support Manager, Customer Experience"
